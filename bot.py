@@ -195,4 +195,4 @@ bot.run(TOKEN)
 # L'enllaç per invitar el bot es el següent (actualment): 
 # https://discord.com/oauth2/authorize?client_id=1324025663925260383&permissions=1239098534918&integration_type=0&scope=bot+applications.commands
 
-
+#idees: character.ai de eli p3
