@@ -13,7 +13,6 @@ load_dotenv()
 
 # Obté el token del bot
 TOKEN = os.getenv("TOKEN")
-
 # Crea una instància del traductor
 translator = Translator()
 
@@ -62,21 +61,21 @@ async def joke(ctx):
 # COMANDA GENERAL 3: Mira el temps
 @bot.command()
 async def weather(ctx, *, city: str):
-    api_key = os.getenv("WEATHER_API_KEY")  # Carrega la clau de l'entorn
+    api_key = os.getenv("WEATHER_API_KEY")  # Load the API key from the environment
     base_url = "http://api.openweathermap.org/data/2.5/weather"
     
-    # Configura la URL de la consulta
+    # Set up the query URL
     params = {
         "q": city,
         "appid": api_key,
-        "units": "metric",  # Temperatura en graus Celsius
-        "lang": "ca"  # Idioma català
+        "units": "metric",  # Temperature in Celsius
+        "lang": "en"  # Language in English
     }
     
     response = requests.get(base_url, params=params)
     data = response.json()
 
-    if response.status_code == 200:  # Consulta amb èxit
+    if response.status_code == 200:  # Successful query
         city_name = data["name"]
         country = data["sys"]["country"]
         temperature = data["main"]["temp"]
@@ -85,15 +84,16 @@ async def weather(ctx, *, city: str):
         wind_speed = data["wind"]["speed"]
 
         await ctx.send(
-            f"**Temps a {city_name}, {country}:**\n"
-            f"- Descripció: {description.capitalize()}\n"
-            f"- Temperatura: {temperature}°C\n"
-            f"- Humitat: {humidity}%\n"
-            f"- Velocitat del vent: {wind_speed} m/s"
+            f"**Weather in {city_name}, {country}:**\n"
+            f"- Description: {description.capitalize()}\n"
+            f"- Temperature: {temperature}°C\n"
+            f"- Humidity: {humidity}%\n"
+            f"- Wind speed: {wind_speed} m/s"
         )
-    else:  # Error (ciutat no trobada o problema amb l'API)
-        error_message = data.get("message", "Error desconegut")
-        await ctx.send(f"No he pogut obtenir el temps per a {city}. Error: {error_message}")
+    else:  # Error (city not found or API problem)
+        error_message = data.get("message", "Unknown error")
+        await ctx.send(f"Could not retrieve the weather for {city}. Error: {error_message}")
+
     
 
 # COMANDA UTILITAT 1: Tradueix paraules
