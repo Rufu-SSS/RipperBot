@@ -107,19 +107,38 @@ async def translate(ctx, language: str, *, text: str):
 
 # COMANDA INFO USUARI 1: Mostra l'avatar
 @bot.command()
-async def avatar(ctx, member: discord.Member=None):
-    member=member or ctx.author
+async def avatar(ctx, member: discord.Member=None, user_id: str=None):
+    # Si no es proporciona un membre, intentem obtenir un usuari pel seu ID
+    if user_id:
+        try:
+            member = await bot.fetch_user(user_id)
+        except discord.NotFound:
+            await ctx.send("No user found with that ID.")
+            return
+    # Si no es proporciona cap membre, utilitzem l'usuari que ha invocat la comanda
+    member = member or ctx.author
     await ctx.send(member.avatar.url)
+
 
 # COMANDA INFO USUARI 2: Mostra el banner de l'usuari (només si te nitro)
 @bot.command()
-async def banner(ctx, member: discord.Member=None):
-    member=member or ctx.author
-    user=await bot.fetch_user(member.id)
+async def banner(ctx, member: discord.Member=None, user_id: str=None):
+    # Si no es proporciona un membre, intentem obtenir un usuari pel seu ID
+    if user_id:
+        try:
+            member = await bot.fetch_user(user_id)
+        except discord.NotFound:
+            await ctx.send("No user found with that ID.")
+            return
+    # Si no es proporciona cap membre, utilitzem l'usuari que ha invocat la comanda
+    member = member or ctx.author
+    user = await bot.fetch_user(member.id)
+    
     if user.banner:
         await ctx.send(f"{user.name}'s banner: {user.banner.url}")
     else:
         await ctx.send(f"{user.name} does not have a banner.")
+
 
 # COMANDA ADMIN 1: Esborra n quantitat de missatges d'un canal de text
 @bot.command()
