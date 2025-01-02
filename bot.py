@@ -165,7 +165,7 @@ async def help(ctx):
 - `%weather [city]`: Get the weather in a specific city.
 
 **USER INFO COMMANDS**:
-- `%showprofile [user_id]´: Show an user's pfp and banner (if they have one).
+- `%showprofile [user_id]`: Show an user's pfp and banner (if they have one).
 
 **UTILITY COMMANDS**:
 - `%translate [language] [text]`: Translate text to the specified language.
