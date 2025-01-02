@@ -179,6 +179,16 @@ async def help(ctx):
 """
     await ctx.send(help_message)
 
+@bot.event
+async def on_message(message):
+    # Evitem que el bot respongui a si mateix
+    if message.author == bot.user:
+        return
+    
+    # Això processarà les comandes que s'escriuen sense duplicar-se
+    await bot.process_commands(message)
+
+
 # Executa el bot
 bot.run(TOKEN)
 
