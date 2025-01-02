@@ -105,44 +105,38 @@ async def translate(ctx, language: str, *, text: str):
     except Exception as e:
         await ctx.send(f"Sorry, I couldn't translate the text. Error: {e}") 
 
-# COMANDA INFO USUARI 1: Mostra l'avatar
+# COMANDA INFO USUARI 1: Mostra tot el perfil de l'usuari
 @bot.command()
-async def avatar(ctx, member: discord.Member=None, user_id: str=None):
-    # Si es proporciona un ID, intentem obtenir l'usuari pel seu ID
+async def showprofile(ctx, user_id: str=None):
+    # Si es proporciona un ID, intentem obtenir-lo amb fetch_user
     if user_id:
         try:
+            # Intentem obtenir l'usuari per ID global
             member = await bot.fetch_user(user_id)
         except discord.NotFound:
             await ctx.send("No user found with that ID.")
             return
-    # Si no es proporciona un membre, utilitzem el membre que invoca la comanda (ctx.author)
-    member = member or ctx.author
-    
-    # Obtenir i enviar l'avatar de l'usuari
-    await ctx.send(member.avatar.url)
-
-
-
-# COMANDA INFO USUARI 2: Mostra el banner de l'usuari (només si te nitro)
-@bot.command()
-async def banner(ctx, member: discord.Member=None, user_id: str=None):
-    # Si es proporciona un ID, intentem obtenir l'usuari pel seu ID
-    if user_id:
-        try:
-            member = await bot.fetch_user(user_id)
-        except discord.NotFound:
-            await ctx.send("No user found with that ID.")
+        except discord.HTTPException as e:
+            await ctx.send(f"An error occurred while fetching the user: {e}")
             return
-    # Si no es proporciona un membre, utilitzem el membre que invoca la comanda (ctx.author)
-    member = member or ctx.author
-    
-    # Obtenir l'usuari i el seu banner
-    user = await bot.fetch_user(member.id)
-    
-    if user.banner:
-        await ctx.send(f"{user.name}'s banner: {user.banner.url}")
     else:
-        await ctx.send(f"{user.name} does not have a banner.")
+        # Si no es proporciona un ID, utilitzem el membre que ha invocat la comanda
+        member = ctx.author
+    
+    # Obtenir i mostrar l'avatar de l'usuari
+    avatar_url = member.avatar.url if member.avatar else None
+    if avatar_url:
+        await ctx.send(f"{member.name}'s [pfp]({avatar_url})")  # Enllacem a l'avatar amb la paraula "pfp"
+    else:
+        await ctx.send(f"{member.name} does not have an avatar.")
+    
+    # Comprovar si l'usuari té Nitro per accedir al banner
+    if member.banner:
+        await ctx.send(f"{member.name}'s [banner]({member.banner.url})")  # Enllacem al banner amb la paraula "banner"
+    else:
+        await ctx.send(f"{member.name} does not have a banner (Nitro required).")
+
+
 
 
 
@@ -171,8 +165,7 @@ async def help(ctx):
 - `%weather [city]`: Get the weather in a specific city.
 
 **USER INFO COMMANDS**:
-- `%avatar [member]`: Show the avatar of a user.
-- `%banner [member]`: Show the banner of a user (if they have Nitro).
+- `%showprofile [user_id]´: Show an user's pfp and banner (if they have one).
 
 **UTILITY COMMANDS**:
 - `%translate [language] [text]`: Translate text to the specified language.
