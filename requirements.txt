@@ -1,0 +1,5 @@
+discord.py
+python-dotenv
+googletrans
+requests
+beautifulsoup4
