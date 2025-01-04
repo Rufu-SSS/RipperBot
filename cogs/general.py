@@ -1,6 +1,6 @@
-import discord
-from discord.ext import commands
+
 import random
+from discord.ext import commands
 
 class General(commands.Cog):
     def __init__(self, bot):
@@ -36,16 +36,6 @@ class General(commands.Cog):
         ...
         ]
         await ctx.send(random.choice(jokes))
-
-   # Afegir altres comandes generals aquí (per exemple, per mostrar un missatge de benvinguda o informació bàsica)
-    @commands.command(name="ping")
-    async def ping(self, ctx):
-        await ctx.send("Pong!")
-
-   # Dir literalment hola
-    @commands.command(name="hi")
-    async def hi(self, ctx):
-        await ctx.send(f"Hello {ctx.author.mention}!")
 
 async def setup(bot):
     await bot.add_cog(General(bot))

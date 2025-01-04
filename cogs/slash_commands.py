@@ -7,6 +7,7 @@ from googletrans import Translator
 from utils.weather_api import get_weather
 from utils.translation import translate_text
 from discord.app_commands import Command
+from utils.weather import get_weather
 
 class SlashCommands(commands.Cog):
     def __init__(self, bot):
