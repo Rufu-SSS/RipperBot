@@ -4,9 +4,6 @@ import random
 import os
 import requests
 from googletrans import Translator
-from utils.weather_api import get_weather
-from utils.translation import translate_text
-from discord.app_commands import Command
 from utils.weather import get_weather
 
 class SlashCommands(commands.Cog):
@@ -40,43 +37,26 @@ class SlashCommands(commands.Cog):
         ]
         await interaction.response.send_message(random.choice(jokes))
 
-   # Comanda Slash: Temps (Weather)
-    @bot.tree.command(name="weather", description="Get the weather for a city")
-    async def weather(self, interaction: discord.Interaction, city: str):
-        api_key = os.getenv("WEATHER_API_KEY")  # Carregar la clau API des de l'entorn
-        base_url = "http://api.openweathermap.org/data/2.5/weather"
-        
-        params = {
-            "q": city,
-            "appid": api_key,
-            "units": "metric",  # Temperatura en graus Celsius
-            "lang": "en"  # L'idioma en anglès
-        }
-        
-        response = requests.get(base_url, params=params)
-        data = response.json()
-
-        if response.status_code == 200:
-            city_name = data["name"]
-            country = data["sys"]["country"]
-            temperature = data["main"]["temp"]
-            description = data["weather"][0]["description"]
-            humidity = data["main"]["humidity"]
-            wind_speed = data["wind"]["speed"]
-
-            await interaction.response.send_message(
-                f"**Weather in {city_name}, {country}:**\n"
-                f"- Description: {description.capitalize()}\n"
-                f"- Temperature: {temperature}°C\n"
-                f"- Humidity: {humidity}%\n"
-                f"- Wind speed: {wind_speed} m/s"
+    # Comanda Slash: Temps (Weather)
+    @discord.app_commands.command(name="weather", description="Get the weather for a city")
+    async def slash_weather(self, interaction: discord.Interaction, city: str):
+        try:
+            weather_data = get_weather(city)
+            response = (
+                f"**Weather in {weather_data['city']}, {weather_data['country']}:**\n"
+                f"- Description: {weather_data['description'].capitalize()}\n"
+                f"- Temperature: {weather_data['temperature']}°C\n"
+                f"- Humidity: {weather_data['humidity']}%\n"
+                f"- Wind speed: {weather_data['wind_speed']} m/s"
             )
-        else:
-            error_message = data.get("message", "Unknown error")
-            await interaction.response.send_message(f"Could not retrieve the weather for {city}. Error: {error_message}")
+            await interaction.response.send_message(response)
+        except ValueError as e:
+            await interaction.response.send_message(str(e))
+        except Exception as e:
+            await interaction.response.send_message(f"An unexpected error occurred: {e}")
 
     # COMANDA SLASH 3: Traductor
-    @bot.tree.command(name="translate", description="Translate text to another language")
+    @discord.app_commands.command(name="translate", description="Translate text to another language")
     async def translate(self, interaction: discord.Interaction, language: str, *, text: str):
         translator = Translator()  # Crear una instància del traductor
         try:
@@ -86,7 +66,7 @@ class SlashCommands(commands.Cog):
             await interaction.response.send_message(f"Sorry, I couldn't translate the text. Error: {e}")
 
     # COMANDA SLASH 4: Mostrar perfil de l'usuari
-    @bot.tree.command(name="showprofile", description="Show a user's profile")
+    @discord.app_commands.command(name="showprofile", description="Show a user's profile")
     async def showprofile_slash(self, interaction: discord.Interaction, user_id: str = None):
         # Si es proporciona un ID d'usuari
         if user_id:
@@ -119,5 +99,5 @@ class SlashCommands(commands.Cog):
         # Enviar la resposta només una vegada
         await interaction.response.send_message(response_message)
 
-def setup(bot):
-    bot.add_cog(SlashCommands(bot))
+async def setup(bot):
+    await bot.add_cog(SlashCommands(bot))

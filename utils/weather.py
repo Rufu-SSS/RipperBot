@@ -2,8 +2,7 @@ import os
 import requests
 from discord.ext import commands
 from dotenv import load_dotenv
-
-load_dotenv()
+from utils.weather import weather
 
 class Weather(commands.Cog):
     def __init__(self, bot):
